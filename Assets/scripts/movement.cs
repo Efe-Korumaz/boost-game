@@ -5,30 +5,49 @@ using UnityEngine;
 public class movement : MonoBehaviour
 {
   Rigidbody rb;
+  AudioSource audioSource;
   [SerializeField] float MainThrust = 100f;
   [SerializeField] float MainRotate = 100f;
+  [SerializeField] AudioClip mainengine;
+  [SerializeField] ParticleSystem thrust;
+  bool isTransition = false;
 
   // Start is called before the first frame update
   void Start()
   {
     rb = GetComponent<Rigidbody>();
+    audioSource = GetComponent<AudioSource>();
   }
 
   // Update is called once per frame
   void Update()
   {
-    ProcessThrust();
-    ProcessRotation();
+    Thrusting();
+    Rotating();
   }
-  void ProcessThrust()
-  {
+  void Thrusting()
+{
     if (Input.GetKey(KeyCode.Space))
     {
-      rb.AddRelativeForce(Vector3.up * MainThrust * Time.deltaTime);
+        rb.AddRelativeForce(Vector3.up * MainThrust * Time.deltaTime);
+        if (!audioSource.isPlaying)
+        {
+            audioSource.PlayOneShot(mainengine);
+        }
+      
+    if (!thrust.isPlaying)
+    {
+      thrust.Play();
     }
-  }
+    }
+       else
+    {
+        audioSource.Stop(); // Stop audio playback when space key is released
+    }
+   
+}
 
-  void ProcessRotation()
+  void Rotating()
   {
     if (Input.GetKey(KeyCode.A))
         {
